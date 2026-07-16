@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. INICIALIZACIÓN DE DATOS (Con usuario predeterminado del equipo Scrum)
+    // 1. INICIALIZACIÓN DE DATOS (Usuario predeterminado del equipo Scrum)
     if (!localStorage.getItem('ac_collaborators')) {
         const defaultUsers = [
             { id: '1024', name: 'Alvaro Díaz (Scrum Master)', role: 'TI / Scrum', pass: 'admin123' }
@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. GESTIÓN DEL TEMA (Claro / Oscuro)
     const themeToggleBtn = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
-
-    // Cargar preferencia guardada
     const savedTheme = localStorage.getItem('ac_theme') || 'dark';
     htmlElement.setAttribute('data-theme', savedTheme);
 
@@ -25,18 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. REFERENCIAS DOM PARA LA SPA
     const authView = document.getElementById('auth-view');
     const dashboardView = document.getElementById('dashboard-view');
+    const placeholderView = document.getElementById('module-placeholder-view');
+    
+    // Referencias Menú Nivel 1
+    const mainNavLinks = document.getElementById('main-nav-links');
+    const userInfoBadge = document.getElementById('user-info-badge');
+    const logoutBtn = document.getElementById('logout-btn');
+    const navItems = document.querySelectorAll('.ac-nav-item');
+
     const alertBox = document.getElementById('alert-box');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    // Función para mostrar alertas en pantalla
     const showAlert = (message, type = 'danger') => {
         alertBox.textContent = message;
         alertBox.className = `alert alert-${type} mt-3 d-block`;
         setTimeout(() => alertBox.classList.add('d-none'), 4000);
     };
 
-    // 4. LÓGICA DE REGISTRO CON VALIDACIÓN DE NO DUPLICIDAD
+    // 4. LÓGICA DE REGISTRO CON VALIDACIÓN ANTI-DUPLICIDAD
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const id = document.getElementById('reg-id').value.trim();
@@ -46,23 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let collaborators = JSON.parse(localStorage.getItem('ac_collaborators')) || [];
 
-        // VALIDACIÓN DE HOMONIMIA / DUPLICIDAD (Según requerimiento de QA)
-        const exists = collaborators.some(colab => colab.id === id);
-        if (exists) {
-            showAlert(`¡Error de Homonimia! El DNI/ID "${id}" ya se encuentra registrado en el sistema.`, 'danger');
+        if (collaborators.some(colab => colab.id === id)) {
+            showAlert(`¡Error de Homonimia! El DNI/ID "${id}" ya se encuentra registrado.`, 'danger');
             return;
         }
 
-        // Guardar nuevo colaborador
         collaborators.push({ id, name, role, pass });
         localStorage.setItem('ac_collaborators', JSON.stringify(collaborators));
 
-        showAlert('¡Colaborador registrado exitosamente! Ya puedes iniciar sesión.', 'success');
+        showAlert('¡Colaborador registrado! Ya puedes iniciar sesión.', 'success');
         registerForm.reset();
-        
-        // Cambiar dinámicamente al tab de Login
-        const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
-        loginTab.show();
+        new bootstrap.Tab(document.getElementById('login-tab')).show();
     });
 
     // 5. LÓGICA DE AUTENTICACIÓN (NIVEL 0 -> NIVEL 1)
@@ -75,35 +74,94 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = collaborators.find(colab => colab.id === id && colab.pass === pass);
 
         if (user) {
-            // Guardar sesión activa
             localStorage.setItem('ac_active_session', JSON.stringify(user));
-            renderDashboard(user);
+            renderLevel1(user);
         } else {
             showAlert('Credenciales inválidas. Verifique su ID o contraseña.', 'danger');
         }
     });
 
-    // 6. CAMBIO DINÁMICO DE VISTA (Comportamiento SPA)
-    const renderDashboard = (user) => {
+    // 6. RENDERIZADO NIVEL 1 (MENÚ SUPERIOR Y DASHBOARD EJECUTIVO)
+    const renderLevel1 = (user) => {
+        // Asignar datos al navbar
         document.getElementById('user-display-name').textContent = user.name;
         document.getElementById('user-display-role').textContent = user.role;
         
-        // Transición de pantallas
+        // Mostrar barra de herramientas y menú de Nivel 1
+        mainNavLinks.classList.remove('d-none');
+        userInfoBadge.classList.remove('d-none');
+        logoutBtn.classList.remove('d-none');
+        
+        // Cambiar vista del SPA
         authView.classList.add('d-none');
+        placeholderView.classList.add('d-none');
         dashboardView.classList.remove('d-none');
+
+        // Resetear menú al dashboard
+        setActiveNav('dashboard');
     };
 
-    // 7. CERRAR SESIÓN
-    document.getElementById('logout-btn').addEventListener('click', () => {
+    // 7. GESTIÓN DE NAVEGACIÓN SPA ENTRE MÓDULOS (Nivel 1 -> Nivel 2.X)
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetModule = item.getAttribute('data-module');
+            setActiveNav(targetModule);
+
+            if (targetModule === 'dashboard') {
+                placeholderView.classList.add('d-none');
+                dashboardView.classList.remove('d-none');
+            } else {
+                dashboardView.classList.add('d-none');
+                placeholderView.classList.remove('d-none');
+                
+                // Configurar el mensaje para los módulos del Nivel 2
+                const titleEl = document.getElementById('placeholder-title');
+                const descEl = document.getElementById('placeholder-desc');
+
+                if (targetModule === 'perfiles') {
+                    titleEl.textContent = '👤 Nivel 2.1: Gestión de Perfiles (PUC)';
+                    descEl.textContent = 'Aquí construiremos el formulario para el Perfil Único de Cliente, validando homonimias y eliminando los registros duplicados de sala.';
+                } else if (targetModule === 'segmentacion') {
+                    titleEl.textContent = '🎯 Nivel 2.2: Motor de Segmentación';
+                    descEl.textContent = 'Módulo para el área de Marketing: Algoritmos para agrupar clientes (Ej: VIP Platino) y envío automatizado de cupones digitales.';
+                } else if (targetModule === 'incidencias') {
+                    titleEl.textContent = '⚠️ Nivel 2.3: Mesa de Incidencias en Sala';
+                    descEl.textContent = 'Mantenimiento de SLAs y alertas críticas si un ticket de atención al cliente supera el límite máximo de 2 horas.';
+                }
+            }
+        });
+    });
+
+    const setActiveNav = (moduleName) => {
+        navItems.forEach(link => {
+            if (link.getAttribute('data-module') === moduleName) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    };
+
+    // 8. CERRAR SESIÓN (Regresar a Nivel 0)
+    logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('ac_active_session');
         loginForm.reset();
+        
+        // Ocultar elementos del menú Nivel 1
+        mainNavLinks.classList.add('d-none');
+        userInfoBadge.classList.add('d-none');
+        logoutBtn.classList.add('d-none');
+        
+        // Volver al Login
         dashboardView.classList.add('d-none');
+        placeholderView.classList.add('d-none');
         authView.classList.remove('d-none');
     });
 
-    // Verificar si ya había una sesión abierta al recargar
+    // Mantener sesión al recargar la SPA
     const activeSession = JSON.parse(localStorage.getItem('ac_active_session'));
     if (activeSession) {
-        renderDashboard(activeSession);
+        renderLevel1(activeSession);
     }
 });
