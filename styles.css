@@ -1,0 +1,103 @@
+/* Variables del Tema y Paleta de Atlantic City (Dorado y Negro) */
+:root[data-theme="dark"] {
+    --bg-main: #111111;
+    --bg-card: #1a1a1a;
+    --text-main: #f8f9fa;
+    --text-muted: #a0a0a0;
+    --gold-primary: #d4af37;
+    --gold-hover: #b89728;
+    --border-color: #333333;
+    --input-bg: #222222;
+}
+
+:root[data-theme="light"] {
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #6c757d;
+    --gold-primary: #b89728;
+    --gold-hover: #967a1f;
+    --border-color: #dee2e6;
+    --input-bg: #ffffff;
+}
+
+/* Estilos Generales */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+}
+
+/* Componentes Personalizados */
+.ac-navbar {
+    background-color: var(--bg-card);
+    border-bottom: 2px solid var(--gold-primary);
+}
+
+.ac-brand {
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--text-main);
+}
+
+.text-gold {
+    color: var(--gold-primary) !important;
+}
+
+.ac-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-main);
+}
+
+/* Inputs y Formularios */
+.ac-input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.ac-input:focus {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+}
+
+/* Botones y Pestañas */
+.btn-gold {
+    background-color: var(--gold-primary);
+    color: #000000;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-gold:hover {
+    background-color: var(--gold-hover);
+    color: #000000;
+}
+
+.btn-outline-gold {
+    border: 1px solid var(--gold-primary);
+    color: var(--gold-primary);
+    background: transparent;
+}
+
+.btn-outline-gold:hover {
+    background-color: var(--gold-primary);
+    color: #000000;
+}
+
+.ac-tab {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.ac-tab.active {
+    color: var(--gold-primary) !important;
+    border-bottom: 2px solid var(--gold-primary) !important;
+    background: transparent !important;
+}
