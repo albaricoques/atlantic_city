@@ -3,23 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlantic City OS - Autenticación</title>
+    <title>Atlantic City OS - Sistema Unificado</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg ac-navbar px-4">
+    <!-- Barra de Navegación Superior / Menú Nivel 1 -->
+    <nav class="navbar navbar-expand-lg ac-navbar px-3 px-lg-4 sticky-top">
         <div class="container-fluid">
-            <span class="navbar-brand ac-brand">ATLANTIC CITY <small class="text-gold">OS</small></span>
-            <button class="btn btn-outline-gold ms-auto" id="theme-toggle">
-                🌙 Modo Oscuro / Claro
+            <span class="navbar-brand ac-brand d-flex align-items-center">
+                ATLANTIC CITY <small class="text-gold ms-1">OS</small>
+            </span>
+            
+            <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse" data-bs-target="#acNavMenu">
+                <span class="navbar-toggler-icon"></span>
             </button>
+
+            <div class="collapse navbar-collapse" id="acNavMenu">
+                <!-- Menú de Navegación Superior (Oculto en Login, visible al autenticar) -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-none" id="main-nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link ac-nav-item active" href="#" data-module="dashboard">📊 Dashboard Ejecutivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ac-nav-item" href="#" data-module="perfiles">👤 Gestión de Perfiles (PUC)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ac-nav-item" href="#" data-module="segmentacion">🎯 Motor de Segmentación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link ac-nav-item" href="#" data-module="incidencias">⚠️ Mesa de Incidencias</a>
+                    </li>
+                </ul>
+
+                <!-- Controles de Usuario y Tema -->
+                <div class="d-flex align-items-center gap-3 ms-auto mt-2 mt-lg-0">
+                    <div id="user-info-badge" class="d-none text-end d-none d-md-block">
+                        <span class="d-block text-gold fw-bold text-truncate" id="user-display-name" style="max-width: 150px;">-</span>
+                        <small class="text-muted" id="user-display-role">-</small>
+                    </div>
+                    <button class="btn btn-outline-gold btn-sm" id="theme-toggle" title="Alternar Tema">🌙</button>
+                    <button class="btn btn-danger btn-sm d-none" id="logout-btn">Cerrar Sesión</button>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main class="container my-5" id="spa-content">
-        <section id="auth-view" class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
+    <!-- Contenedor SPA Principal -->
+    <main class="container-fluid px-4 my-4" id="spa-content">
+        
+        <!-- VISTA 1: NIVEL 0 - AUTENTICACIÓN Y REGISTRO (Sin cambios lógicos) -->
+        <section id="auth-view" class="row justify-content-center my-5">
+            <div class="col-12 col-md-8 col-lg-5">
                 <div class="card ac-card shadow-lg">
                     <div class="card-header text-center py-3">
                         <h4 class="mb-0 text-gold">Nivel 0: Autenticación de Seguridad</h4>
@@ -36,7 +72,8 @@
                         </ul>
 
                         <div class="tab-content" id="auth-tab-content">
-                            <div class="tab-pane fade show active" id="login-panel" role="tabpanel">
+                            <!-- Login -->
+                            <div class="tab-pane fade show active" id="login-panel">
                                 <form id="login-form">
                                     <div class="mb-3">
                                         <label for="login-id" class="form-label">DNI / ID de Colaborador</label>
@@ -49,8 +86,8 @@
                                     <button type="submit" class="btn btn-gold w-100 py-2">Validar Acceso</button>
                                 </form>
                             </div>
-
-                            <div class="tab-pane fade" id="register-panel" role="tabpanel">
+                            <!-- Registro -->
+                            <div class="tab-pane fade" id="register-panel">
                                 <form id="register-form">
                                     <div class="mb-3">
                                         <label for="reg-id" class="form-label">DNI / ID Único</label>
@@ -77,39 +114,101 @@
                                 </form>
                             </div>
                         </div>
-
                         <div id="alert-box" class="alert mt-3 d-none" role="alert"></div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- VISTA 2: NIVEL 1 - DASHBOARD ANALÍTICO CORPORATIVO (BI) -->
         <section id="dashboard-view" class="d-none">
-            <div class="card ac-card p-4">
-                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-4">
-                    <div>
-                        <h2 class="text-gold mb-0">Dashboard Principal (Nivel 1)</h2>
-                        <p class="text-muted mb-0">Centro de distribución operativa del sistema Atlantic City</p>
-                    </div>
-                    <button class="btn btn-danger btn-sm" id="logout-btn">Cerrar Sesión</button>
+            <!-- Nota del sistema informando sincronización -->
+            <div class="alert ac-alert-info d-flex align-items-center mb-4" role="alert">
+                <span class="fs-5 me-2">ℹ️</span>
+                <div>
+                    <strong>Nota del Sistema:</strong> Los datos operativos se actualizan mediante procesos centralizados en tiempo real para las 6 gerencias.
                 </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="p-3 border border-secondary rounded text-center">
-                            <h5>Usuario Activo</h5>
-                            <p class="text-gold fs-4 mb-0" id="user-display-name">-</p>
-                            <small class="text-muted" id="user-display-role">-</small>
+            </div>
+
+            <!-- Panel de Indicadores (KPIs del Casino) -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-4">
+                    <div class="card ac-card p-3 border-top-gold h-100">
+                        <small class="text-muted text-uppercase fw-bold">Total Clientes Activos (PUC)</small>
+                        <div class="d-flex align-items-baseline justify-content-between mt-2">
+                            <h2 class="text-gold mb-0 display-6 fw-bold" id="kpi-clients">12,450</h2>
+                            <span class="badge bg-success bg-opacity-25 text-success">▲ 5% vs mes ant.</span>
                         </div>
                     </div>
-                    <div class="col-md-8 d-flex align-items-center justify-content-center border border-secondary rounded">
-                        <p class="text-muted my-4">Módulos de Gestión de Perfiles (PUC), Segmentación y Mesa de Incidencias listos para integrar en el Sprint 2.</p>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card ac-card p-3 border-top-gold h-100">
+                        <small class="text-muted text-uppercase fw-bold">Conversión General Promociones</small>
+                        <div class="d-flex align-items-baseline justify-content-between mt-2">
+                            <h2 class="text-gold mb-0 display-6 fw-bold">64.2%</h2>
+                            <span class="badge bg-warning bg-opacity-25 text-warning">▼ 2.1% Desviación</span>
+                        </div>
                     </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card ac-card p-3 border-top-gold h-100">
+                        <small class="text-muted text-uppercase fw-bold">Reclamos Resueltos en SLA</small>
+                        <div class="d-flex align-items-baseline justify-content-between mt-2">
+                            <h2 class="text-gold mb-0 display-6 fw-bold">94.8%</h2>
+                            <span class="badge bg-success bg-opacity-25 text-success">▲ Meta Institucional</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Operativos y Automatizaciones -->
+            <div class="row g-4">
+                <div class="col-12 col-lg-7">
+                    <div class="card ac-card p-4 h-100">
+                        <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Distribución de Ingresos por Clúster</h5>
+                        <div class="ac-chart-placeholder d-flex flex-column align-items-center justify-content-center text-center p-5 rounded">
+                            <span class="display-4 mb-2">📈</span>
+                            <p class="text-muted mb-0">Espacio Reservado para Tablero BI / Gráfico de Torta Interactivo</p>
+                            <small class="text-gold mt-1">(Conectando con Motor de Segmentación - Sprint 2)</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5">
+                    <div class="card ac-card p-4 h-100">
+                        <h5 class="text-gold border-bottom border-secondary pb-2 mb-3">Alertas y Automatizaciones Gatilladas</h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="p-3 rounded ac-log-item border-start border-4 border-success">
+                                <small class="text-muted d-block">18/06 - 02:00 AM</small>
+                                <strong>Segmentación diaria completada con éxito.</strong> 45 clientes migrados automáticamente a categoría <em>VIP Platino</em>.
+                            </div>
+                            <div class="p-3 rounded ac-log-item border-start border-4 border-warning">
+                                <small class="text-muted d-block">17/06 - 04:30 PM</small>
+                                <strong>Alerta automática de Marketing:</strong> Caída del 1.5% en efectividad de cupones de tragamonedas en sala.
+                            </div>
+                            <div class="p-3 rounded ac-log-item border-start border-4 border-info">
+                                <small class="text-muted d-block">17/06 - 11:15 AM</small>
+                                <strong>Atención en Sala:</strong> Terminal ID-1027 reportó nuevo caso resuelto satisfactoriamente usando historial contextual.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 3: MÓDULOS EN CONSTRUCCIÓN (Nivel 2.1, 2.2, 2.3) -->
+        <section id="module-placeholder-view" class="d-none my-5">
+            <div class="card ac-card p-5 text-center max-w-lg mx-auto">
+                <h2 class="text-gold mb-3" id="placeholder-title">Módulo en Desarrollo</h2>
+                <p class="text-muted lead mb-4" id="placeholder-desc">Esta funcionalidad será implementada paso a paso en el Nivel 2 de nuestra arquitectura.</p>
+                <div>
+                    <button class="btn btn-outline-gold" onclick="document.querySelector('[data-module=\'dashboard\']').click()">⬅ Volver al Dashboard Ejecutivo</button>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
