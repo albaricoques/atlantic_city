@@ -101,3 +101,57 @@ body {
     border-bottom: 2px solid var(--gold-primary) !important;
     background: transparent !important;
 }
+
+/* --- ESTILOS NIVEL 1: DASHBOARD Y NAVEGACIÓN --- */
+
+/* Menú Principal Superior */
+.ac-nav-item {
+    color: var(--text-main) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.ac-nav-item:hover, .ac-nav-item.active {
+    background-color: rgba(212, 175, 55, 0.15);
+    color: var(--gold-primary) !important;
+}
+
+/* Tarjetas Analíticas KPI */
+.border-top-gold {
+    border-top: 3px solid var(--gold-primary) !important;
+}
+
+/* Alertas informativas del Sistema */
+.ac-alert-info {
+    background-color: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--gold-primary);
+    color: var(--text-main);
+    border-radius: 8px;
+}
+
+/* Gráfico Simulado y Logs */
+.ac-chart-placeholder {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px dashed var(--border-color);
+    min-height: 250px;
+}
+
+.ac-log-item {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+}
+
+:root[data-theme="light"] .ac-log-item {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Ajustes Responsive para menú móvil */
+@media (max-width: 991px) {
+    #main-nav-links {
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1rem;
+    }
+}
