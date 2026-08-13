@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlantic City · Motor de Segmentación</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="dash-body">
+
+<header class="dash-header seg-header">
+  <div class="logo">
+    <span class="title">ATLANTIC CITY</span>
+    <span class="subtitle">CASINO ◆ SPORTS</span>
+  </div>
+  <h2>MOTOR DE SEGMENTACIÓN</h2>
+</header>
+
+<main class="gp-main seg-main">
+
+  <a href="dashboard.html" class="back-btn seg-back" title="Volver al dashboard">
+    <svg viewBox="0 0 64 64">
+      <path d="M40 12 L18 32 L40 52" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <!-- ---- KPIs ---- -->
+  <section class="seg-kpi-row">
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">TOTAL DE CAMPAÑAS ACTIVAS</span>
+      <span class="seg-kpi-value" id="kpiCampanas">1</span>
+    </div>
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">CONVERSIÓN GENERAL DE CUPONES</span>
+      <span class="seg-kpi-value">64.2%</span>
+      <span class="seg-kpi-trend down">▼ 2.1% Desviación crítica</span>
+    </div>
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">CLIENTES IMPACTADOS (MES)</span>
+      <span class="seg-kpi-value">8,324</span>
+      <span class="seg-kpi-trend up">▲ 8% vs mes anterior</span>
+    </div>
+  </section>
+
+  <!-- ---- Layout principal ---- -->
+  <section class="seg-layout">
+
+    <!-- ---- PANEL IZQUIERDO: PARAMETRIZACIÓN ---- -->
+    <div class="seg-panel seg-param-panel">
+      <h3 class="seg-panel-title">PARAMETRIZACIÓN DE CUPONES</h3>
+
+      <div class="param-form">
+        <div class="param-col">
+          <div class="field">
+            <label>CLÚSTER OBJETIVO</label>
+            <select id="paramCluster">
+              <option value="">SELECCIONAR</option>
+              <option>VIP Platino</option>
+              <option>Casual Mesas</option>
+              <option>Tragamonedas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>NOMBRE DEL CÚPON</label>
+            <input type="text" id="paramNombre" placeholder="NOMBRE DEL CÚPON">
+          </div>
+          <div class="field">
+            <label>DESCUENTO %</label>
+            <select id="paramDescuento">
+              <option value="">SELECCIONAR</option>
+              <option>5%</option>
+              <option>10%</option>
+              <option>15%</option>
+              <option>20%</option>
+              <option>25%</option>
+              <option>30%</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>FECHA DE VIGENCIA</label>
+            <div class="date-row">
+              <div class="date-wrap">
+                <span class="date-prefix">DEL</span>
+                <input type="date" id="paramFechaDesde">
+              </div>
+              <div class="date-wrap">
+                <span class="date-prefix">HASTA</span>
+                <input type="date" id="paramFechaHasta">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>VÍAS DE DESPACHO</label>
+            <div class="check-row three-check">
+              <label class="check-item">
+                <input type="checkbox" id="viaEmail" value="Email">
+                <span>Email</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="viaSms" value="SMS">
+                <span>SMS</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="viaApp" value="APP">
+                <span>APP</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="param-col">
+          <div class="field">
+            <label>CLIENTE NUEVO/REGULAR</label>
+            <div class="check-row">
+              <label class="check-item">
+                <input type="checkbox" id="tipoNuevo" checked>
+                <span>NUEVO</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="tipoRegular">
+                <span>REGULAR</span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>FRECUENCIA MÍNIMA DE VISITAS</label>
+            <div class="check-row three-check">
+              <label class="check-item">
+                <input type="checkbox" id="freqAlta" value="ALTA">
+                <span>ALTA</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="freqMedia" value="MEDIA">
+                <span>MEDIA</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="freqBaja" value="BAJA">
+                <span>BAJA</span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>NIVEL DE GASTO</label>
+            <div class="check-row three-check">
+              <label class="check-item">
+                <input type="checkbox" id="gastoAlto" value="ALTO">
+                <span>ALTO</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="gastoMedio" value="MEDIO">
+                <span>MEDIO</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="gastoBajo" value="BAJO">
+                <span>BAJO</span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>DESCRIPCIÓN DEL CÚPON</label>
+            <textarea id="paramDescripcion" rows="5" placeholder="Descripción del cupón..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <p class="form-error" id="paramError" style="display:none;"></p>
+      <button class="submit-btn seg-submit" onclick="programarCupon()">PROGRAMAR DESPACHO</button>
+    </div>
+
+    <!-- ---- PANEL DERECHO: CLÚSTERES + MONITOREO ---- -->
+    <div class="seg-right-wrap">
+
+      <!-- Tabs del panel derecho -->
+      <div class="seg-tabs">
+        <button class="seg-tab active" onclick="showSegTab('resumen')" id="tabResumen">VISUALIZACIÓN DE CLÚSTERES</button>
+        <button class="seg-tab" onclick="showSegTab('monitoreo')" id="tabMonitoreo">MONITOREO DE CUPONES DIGITALES</button>
+      </div>
+
+      <div class="seg-content-panel">
+
+        <!-- VISTA 1: RESUMEN (tarjetas de clúster + embudo) -->
+        <div class="seg-tab-body" id="seg-resumen">
+          <div class="resumen-layout">
+
+            <!-- Tarjetas de clúster -->
+            <div class="cluster-col">
+              <div class="cluster-card tier1">
+                <span class="cluster-name">VIP PLATINO</span>
+                <span class="cluster-num">1234</span>
+                <span class="cluster-sub">CLIENTES ACTIVOS</span>
+              </div>
+              <div class="cluster-card tier2">
+                <span class="cluster-name">CASUAL MESAS</span>
+                <span class="cluster-num">1854</span>
+                <span class="cluster-sub">CLIENTES ACTIVOS</span>
+              </div>
+              <div class="cluster-card tier3">
+                <span class="cluster-name">TRAGAMONEDAS</span>
+                <span class="cluster-num">3540</span>
+                <span class="cluster-sub">CLIENTES ACTIVOS</span>
+              </div>
+            </div>
+
+            <!-- Embudo -->
+            <div class="funnel-col">
+              <div class="funnel">
+                <div class="funnel-tier t1">
+                  <span class="funnel-pct">20%</span>
+                  <span class="funnel-label">VIP PLATINO</span>
+                </div>
+                <div class="funnel-tier t2">
+                  <span class="funnel-pct">35%</span>
+                  <span class="funnel-label">CASUAL MESAS</span>
+                </div>
+                <div class="funnel-tier t3">
+                  <span class="funnel-pct">45%</span>
+                  <span class="funnel-label">TRAGAMONEDAS</span>
+                </div>
+                <div class="funnel-base"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Banner informativo dorado -->
+          <div class="seg-banner info">
+            <svg viewBox="0 0 24 24" class="banner-icon"><circle cx="12" cy="12" r="11" fill="#1c1400"/><path d="M12 7v11M8 8h7v1H8zM12 19a1 1 0 1 0 0 .01" fill="none" stroke="var(--gold-light)" stroke-width="1.9" stroke-linecap="round"/></svg>
+            <span>Última segmentación diaria completada a las 02:00 AM: 45 clientes migrados a VIP Platino</span>
+          </div>
+        </div>
+
+        <!-- VISTA 2: MONITOREO (tabla de cupones) -->
+        <div class="seg-tab-body" id="seg-monitoreo" style="display:none;">
+          <div class="table-scroll">
+            <table class="seg-table" id="tablaCupones">
+              <thead>
+                <tr>
+                  <th>CÓDIGO DE CUPÓN</th>
+                  <th>CLÚSTER DESTINO</th>
+                  <th>CANAL DE DESPACHO</th>
+                  <th>TASA DE CONVERSIÓN</th>
+                  <th>ESTADO DE CAMPAÑA</th>
+                  <th>ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody id="cuponesBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Banner rojo de advertencia (visible si hay cupón pausado) -->
+          <div class="seg-banner danger" id="pausaBanner" style="display:none;">
+            <svg viewBox="0 0 24 24" class="banner-icon"><circle cx="12" cy="12" r="11" fill="#fff"/><rect x="10.7" y="6" width="2.6" height="8" rx="1.3" fill="#7a1f1f"/><circle cx="12" cy="17" r="1.6" fill="#7a1f1f"/></svg>
+            <span>SE HA PAUSADO LA ACTIVIDAD DE UNA CAMPAÑA/CUPÓN DEBIDO A UNA TAZA BAJA DE CONVERSIÓN....</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner de éxito (abajo a la izquierda) -->
+  <div class="seg-success-toast" id="successToast" style="display:none;">
+    <svg viewBox="0 0 24 24" class="toast-check"><circle cx="12" cy="12" r="11" fill="var(--gold)"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#1c1400" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>PARAMETRIZACIÓN PROCESADA</span>
+  </div>
+
+</main>
+
+<!-- ---- Modal: Detalles del Cupón ---- -->
+<div class="modal-overlay" id="cuponModal" style="display:none;">
+  <div class="modal-card cupon-modal-card">
+    <h4 class="cupon-modal-title">DETALLES DEL CUPÓN</h4>
+
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">CÓDIGO DEL CÚPON:</span>
+      <span class="cupon-detail-value" id="mdlCodigo"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">CLÚSTER OBJETIVO:</span>
+      <span class="cupon-detail-value" id="mdlCluster"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">DESCUENTO %:</span>
+      <span class="cupon-detail-value" id="mdlDescuento"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">FECHA DE VIGENCIA:</span>
+      <span class="cupon-detail-value" id="mdlVigencia"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">VÍA DE DESPACHO:</span>
+      <span class="cupon-detail-value cupon-inline" id="mdlCanales"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">CLIENTE NUEVO/REGULAR:</span>
+      <span class="cupon-detail-value" id="mdlTipoCliente"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">FRECUENCIA DE VISITAS:</span>
+      <span class="cupon-detail-value" id="mdlFrecuencia"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">NIVEL DE GASTO:</span>
+      <span class="cupon-detail-value" id="mdlGasto"></span>
+    </div>
+    <div class="cupon-detail-row">
+      <span class="cupon-detail-label">DESCRIPCIÓN:</span>
+      <span class="cupon-detail-value" id="mdlDescripcion"></span>
+    </div>
+
+    <button class="submit-btn cupon-modal-btn" onclick="cerrarCuponModal()">LISTO</button>
+  </div>
+</div>
+
+<footer>Sistema interno · Atlantic City Casino &amp; Sports</footer>
+
+<script src="script.js"></script>
+<script>
+  // ============================================================
+  // Motor de Segmentación — demo académica sin backend (localStorage)
+  // ============================================================
+
+  // --- Protección de ruta ---
+  document.addEventListener('DOMContentLoaded', () => {
+    if(!validarAccesoModulo('segmentacion')) return;
+    renderCupones();
+  });
+
+  // --- Tabs del panel derecho ---
+  function showSegTab(tab){
+    const isResumen = tab === 'resumen';
+    document.getElementById('seg-resumen').style.display = isResumen ? 'block' : 'none';
+    document.getElementById('seg-monitoreo').style.display = isResumen ? 'none' : 'block';
+    document.getElementById('tabResumen').classList.toggle('active', isResumen);
+    document.getElementById('tabMonitoreo').classList.toggle('active', !isResumen);
+  }
+
+  // --- Datos de cupones ---
+  function obtenerCupones(){
+    let cupones = JSON.parse(localStorage.getItem('ac_cupones') || 'null');
+    if(!cupones){
+      cupones = [
+        { codigo:'#CUP-PLATINO', cluster:'VIP Platino', canales:['Email','SMS','APP'], conversion:95, estado:'ACTIVA', nombre:'Cupón Platino', descuento:'30%', nuevo:true, regular:false, frecuencia:'ALTA', gasto:'ALTO', descripcion:'CÚPON DE DESCUENTO PARA LOS CLIENTES VIP PLATINO QUE SE REGISTRAN POR PRIMERA VEZ.', desde:'2026-08-01', hasta:'2026-08-31' },
+        { codigo:'#CUP-CASUAL', cluster:'Casual Mesas', canales:['APP','SMS'], conversion:0, estado:'PROGRAMADA', nombre:'Cupón Casual', descuento:'10%', nuevo:true, regular:true, frecuencia:'MEDIA', gasto:'MEDIO', descripcion:'Promoción para clientes de mesas.', desde:'', hasta:'' },
+        { codigo:'#CUP-NAVIDAD', cluster:'Tragamonedas', canales:['APP'], conversion:49, estado:'PAUSADA', nombre:'Cupón Navidad', descuento:'15%', nuevo:false, regular:true, frecuencia:'BAJA', gasto:'BAJO', descripcion:'Promoción navideña de tragamonedas.', desde:'', hasta:'' }
+      ];
+      guardarCupones(cupones);
+    }
+    return cupones;
+  }
+  function guardarCupones(cupones){
+    localStorage.setItem('ac_cupones', JSON.stringify(cupones));
+  }
+
+  function generarCodigoCupon(nombre){
+    return '#CUP-' + nombre.toUpperCase();
+  }
+
+  function checkboxesConValor(ids){
+    const vals = [];
+    ids.forEach(id => { if(document.getElementById(id).checked) vals.push(document.getElementById(id).value || document.getElementById(id).id); });
+    return vals;
+  }
+
+  // --- Programar nuevo cupón ---
+  function programarCupon(){
+    const cluster = document.getElementById('paramCluster').value;
+    const nombre = document.getElementById('paramNombre').value.trim();
+    const descuento = document.getElementById('paramDescuento').value;
+    const desde = document.getElementById('paramFechaDesde').value;
+    const hasta = document.getElementById('paramFechaHasta').value;
+    const canales = checkboxesConValor(['viaEmail','viaSms','viaApp']);
+    const nuevo = document.getElementById('tipoNuevo').checked;
+    const regular = document.getElementById('tipoRegular').checked;
+    const frecuenciaArr = checkboxesConValor(['freqAlta','freqMedia','freqBaja']);
+    const gastoArr = checkboxesConValor(['gastoAlto','gastoMedio','gastoBajo']);
+    const frecuencia = frecuenciaArr.join('/');
+    const gasto = gastoArr.join('/');
+    const descripcion = document.getElementById('paramDescripcion').value.trim();
+    const errorEl = document.getElementById('paramError');
+
+    errorEl.style.display = 'none';
+
+    if(!cluster){
+      errorEl.textContent = 'Debe seleccionar un clúster objetivo.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!nombre){
+      errorEl.textContent = 'Debe ingresar un nombre para el cupón.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(nombre.length > 10 || nombre.includes(' ')){
+      errorEl.textContent = 'El nombre del cupón debe tener máximo 10 caracteres y no incluir espacios.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!descuento){
+      errorEl.textContent = 'Debe seleccionar un descuento.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!desde || !hasta){
+      errorEl.textContent = 'Debe seleccionar una fecha de vigencia (desde y hasta).';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(canales.length === 0){
+      errorEl.textContent = 'Debe seleccionar al menos una vía de despacho.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const hayParametroExtra = nuevo || regular || frecuenciaArr.length > 0 || gastoArr.length > 0;
+    if(!hayParametroExtra){
+      errorEl.textContent = 'Debe seleccionar al menos 1 parámetro adicional (tipo de cliente, frecuencia de visitas o nivel de gasto).';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(descripcion.length > 150){
+      errorEl.textContent = 'La descripción del cupón debe tener máximo 150 caracteres.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const cupones = obtenerCupones();
+    const codigoCupon = generarCodigoCupon(nombre);
+
+    if(cupones.some(c => c.codigo === codigoCupon)){
+      errorEl.textContent = `Ya existe un cupón con el código ${codigoCupon}. Elija un nombre diferente.`;
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    cupones.push({
+      codigo: codigoCupon,
+      cluster, canales,
+      conversion: 0,
+      estado: 'PROGRAMADA',
+      nombre, descuento,
+      nuevo, regular,
+      frecuencia, gasto,
+      descripcion,
+      desde, hasta
+    });
+    guardarCupones(cupones);
+
+    // Limpiar formulario (reset controlado)
+    document.getElementById('paramCluster').value = '';
+    document.getElementById('paramNombre').value = '';
+    document.getElementById('paramDescuento').value = '';
+    document.getElementById('paramFechaDesde').value = '';
+    document.getElementById('paramFechaHasta').value = '';
+    ['viaEmail','viaSms','viaApp'].forEach(id => document.getElementById(id).checked = false);
+    document.getElementById('tipoNuevo').checked = true;
+    document.getElementById('tipoRegular').checked = false;
+    ['freqAlta','freqMedia','freqBaja','gastoAlto','gastoMedio','gastoBajo'].forEach(id => document.getElementById(id).checked = false);
+    document.getElementById('paramDescripcion').value = '';
+
+    // Actualizar KPI y tabla
+    document.getElementById('kpiCampanas').textContent = cupones.filter(c => c.estado === 'ACTIVA' || c.estado === 'PROGRAMADA').length;
+    renderCupones();
+
+    // Mostrar toast de éxito
+    const toast = document.getElementById('successToast');
+    toast.style.display = 'inline-flex';
+    setTimeout(() => { toast.style.display = 'none'; }, 5000);
+  }
+
+  // --- Render tabla de cupones ---
+  function renderCupones(){
+    const cupones = obtenerCupones();
+    const body = document.getElementById('cuponesBody');
+    body.innerHTML = '';
+
+    let hayPausado = false;
+
+    cupones.forEach(c => {
+      const convPct = Number(c.conversion);
+      const convColor = convPct >= 70 ? 'seg-conv-high' : (convPct <= 50 && convPct > 0 ? 'seg-conv-low' : '');
+      let estadoCls = 'seg-estado activa';
+      if(c.estado === 'PROGRAMADA') estadoCls = 'seg-estado programada';
+      if(c.estado === 'PAUSADA') { estadoCls = 'seg-estado pausada'; hayPausado = true; }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${c.codigo}</td>
+        <td>${c.cluster}</td>
+        <td>${c.canales.join('<br>')}</td>
+        <td class="${convColor}">${c.conversion}${typeof c.conversion === 'number' ? '%' : ''}</td>
+        <td><span class="${estadoCls}">${c.estado}</span></td>
+        <td><button class="submit-btn mini-btn seg-detail-btn" onclick="detalleCupon('${c.codigo}')">Más Detalles</button></td>`;
+      body.appendChild(tr);
+    });
+
+    document.getElementById('pausaBanner').style.display = hayPausado ? 'flex' : 'none';
+    document.getElementById('kpiCampanas').textContent = cupones.filter(c => c.estado === 'ACTIVA' || c.estado === 'PROGRAMADA').length;
+  }
+
+  function formatoFechaLarga(iso){
+    if(!iso) return 'N/A';
+    const meses = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+    const d = new Date(iso);
+    const dia = String(d.getDate()).padStart(2,'0');
+    const mes = meses[d.getMonth()];
+    const anio = d.getFullYear();
+    return { dia, mes, anio, texto: `${dia} DE ${mes} DE ${anio}` };
+  }
+
+  function detalleCupon(codigo){
+    const c = obtenerCupones().find(x => x.codigo === codigo);
+    if(!c) return;
+    document.getElementById('mdlCodigo').textContent = c.codigo;
+    document.getElementById('mdlCluster').textContent = c.cluster ? c.cluster.toUpperCase() : 'N/A';
+    document.getElementById('mdlDescuento').textContent = c.descuento || 'N/A';
+
+    let vigencia = 'N/A';
+    if(c.desde && c.hasta){
+      const d1 = formatoFechaLarga(c.desde);
+      const d2 = formatoFechaLarga(c.hasta);
+      if(d1.mes === d2.mes){
+        vigencia = `DEL ${d1.dia} AL ${d2.dia} DE ${d1.mes}${d1.anio !== d2.anio ? ` ${d1.anio} A ${d2.anio}` : ''}`;
+      } else {
+        vigencia = `DEL ${d1.dia} DE ${d1.mes} AL ${d2.dia} DE ${d2.mes}`;
+      }
+    } else if(c.desde || c.hasta){
+      vigencia = c.desde ? formatoFechaLarga(c.desde).texto : formatoFechaLarga(c.hasta).texto;
+    }
+    document.getElementById('mdlVigencia').textContent = vigencia;
+
+    document.getElementById('mdlCanales').innerHTML = (c.canales && c.canales.length)
+      ? c.canales.map(ch => `<span class="canal-tag">${ch.toUpperCase()}</span>`).join('')
+      : 'N/A';
+
+    const tipos = [];
+    if(c.nuevo) tipos.push('NUEVO');
+    if(c.regular) tipos.push('REGULAR');
+    document.getElementById('mdlTipoCliente').textContent = tipos.length ? tipos.join(' / ') : 'N/A';
+    document.getElementById('mdlFrecuencia').textContent = c.frecuencia || 'N/A';
+    document.getElementById('mdlGasto').textContent = c.gasto || 'N/A';
+    document.getElementById('mdlDescripcion').textContent = c.descripcion || '(sin descripción)';
+
+    document.getElementById('cuponModal').style.display = 'flex';
+  }
+
+  function cerrarCuponModal(){
+    document.getElementById('cuponModal').style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const cuponModalEl = document.getElementById('cuponModal');
+    if(cuponModalEl){
+      cuponModalEl.addEventListener('click', e => {
+        if(e.target.id === 'cuponModal') cerrarCuponModal();
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

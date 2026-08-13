@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlantic City · Mesa de Incidentes</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="dash-body">
+
+<header class="dash-header">
+  <div class="logo">
+    <span class="title">ATLANTIC CITY</span>
+    <span class="subtitle">CASINO · SPORTS</span>
+  </div>
+  <h2>MESA DE INCIDENTES</h2>
+</header>
+
+<main class="gp-main">
+
+  <a href="dashboard.html" class="back-btn" title="Volver al dashboard">
+    <svg viewBox="0 0 64 64">
+      <path d="M40 12 L18 32 L40 52" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <!-- ---- KPIs ---- -->
+  <section class="inc-kpi-row">
+    <div class="kpi-card">
+      <span class="kpi-label">TICKETS ACTIVOS EN SALA</span>
+      <span class="kpi-value" id="kpiActivos">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">TICKETS EN ESTADO CRÍTICO (&gt;2 hrs)</span>
+      <span class="kpi-value critical" id="kpiCriticos">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">RECLAMOS RESUELTOS EN SLA</span>
+      <span class="kpi-value good">94.8%</span>
+      <span class="kpi-trend up">▲ Meta institucional lograda</span>
+    </div>
+  </section>
+
+  <!-- ---- Formulario + Historial / Monitoreo ---- -->
+  <section class="inc-layout">
+
+    <div class="gp-panel inc-form-panel">
+      <h3 class="inc-panel-title">FORMULARIO DE APERTURA DE INCIDENCIA</h3>
+
+      <div class="inc-form-body">
+        <div class="inc-form-col">
+          <div class="field">
+            <label>DNI/ID DE CLIENTE</label>
+            <input type="text" id="incDni" placeholder="Ej: 12345678">
+          </div>
+          <div class="field">
+            <label>TIPO DE INCIDENCIA</label>
+            <select id="incTipo">
+              <option value="">SELECCIONAR</option>
+              <option>Reclamo de pago</option>
+              <option>Falla de máquina/mesa</option>
+              <option>Conducta inapropiada</option>
+              <option>Consulta general</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>DESCRIPCIÓN DEL HECHO</label>
+            <textarea id="incDescripcion" rows="4" placeholder="Describa lo sucedido..."></textarea>
+          </div>
+          <p class="form-error" id="incFormError" style="display:none;"></p>
+          <button class="submit-btn" onclick="abrirTicket()">ABRIR TICKET</button>
+        </div>
+
+        <div class="inc-history-col">
+          <span class="inc-history-title">HISTORIAL DEL CLIENTE</span>
+          <div class="inc-history-table" id="historialWrap">
+            <div class="inc-history-empty" id="historialEmpty">
+              <svg viewBox="0 0 64 64" class="empty-icon"><circle cx="26" cy="26" r="16" fill="none" stroke="#5a5a5a" stroke-width="4"/><line x1="37" y1="37" x2="52" y2="52" stroke="#5a5a5a" stroke-width="4" stroke-linecap="round"/><line x1="19" y1="19" x2="33" y2="33" stroke="#5a5a5a" stroke-width="4" stroke-linecap="round"/><line x1="33" y1="19" x2="19" y2="33" stroke="#5a5a5a" stroke-width="4" stroke-linecap="round"/></svg>
+              <span>NO HAY REPORTES ANTERIORES PARA ESTE CLIENTE</span>
+            </div>
+            <div class="table-scroll">
+            <table class="inc-table" id="historialTable" style="display:none;">
+              <thead>
+                <tr><th>FECHA</th><th>ID DE TICKET</th><th>ACCIONES</th></tr>
+              </thead>
+              <tbody id="historialBody"></tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gp-panel inc-monitor-panel">
+      <h3 class="inc-panel-title">MONITOREO DE TICKETS Y SLA's EN SALA</h3>
+      <div class="table-scroll">
+      <table class="inc-table monitor-table">
+        <thead>
+          <tr>
+            <th>ID DE TICKET</th><th>CLIENTE</th><th>CLÚSTER</th>
+            <th>TIEMPO ACTIVO</th><th>ESTADO/SLA</th><th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody id="monitorBody"></tbody>
+      </table>
+      </div>
+      <div class="critical-banner" id="criticalBanner" style="display:none;">
+        <svg viewBox="0 0 24 24" class="banner-icon"><circle cx="12" cy="12" r="11" fill="#fff"/><rect x="10.7" y="6" width="2.6" height="8" rx="1.3" fill="#7a1f1f"/><circle cx="12" cy="17" r="1.6" fill="#7a1f1f"/></svg>
+        <span>UN TICKET HA PASADO MÁS DE 2 HORAS SIN RESOLVERSE, TRANSFIRIENDO A GERENCIA DE OPERACIONES...</span>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>Sistema interno · Atlantic City Casino &amp; Sports</footer>
+
+<!-- ---- Modal: registrar / ver detalles de ticket ---- -->
+<div class="modal-overlay" id="ticketModal" style="display:none;">
+  <div class="modal-card">
+    <h4 id="modalTitle">DETALLES DEL TICKET</h4>
+
+    <div class="modal-field">
+      <label>ID DE CLIENTE:</label>
+      <span class="modal-value" id="modalCliente">[ID DEL CLIENTE]</span>
+    </div>
+    <div class="modal-field">
+      <label>TIPO DE INCIDENCIA:</label>
+      <span class="modal-value" id="modalTipo">[TIPO DE INCIDENCIA]</span>
+    </div>
+    <div class="modal-field">
+      <label>DESCRIPCIÓN DEL HECHO:</label>
+      <span class="modal-value" id="modalDescripcion">[DESCRIPCIÓN DEL HECHO]</span>
+    </div>
+
+    <div class="modal-field" id="modalSolucionInputWrap">
+      <label>DETALLES DE SOLUCIÓN</label>
+      <textarea id="modalSolucionInput" rows="3" placeholder="Detalle la solución..."></textarea>
+    </div>
+
+    <div class="modal-field" id="modalSolucionTextWrap" style="display:none;">
+      <label>DETALLES DE SOLUCIÓN</label>
+      <span class="modal-value" id="modalSolucionText">[DESCRIPCIÓN DEL HECHO]</span>
+    </div>
+
+    <button class="submit-btn" id="modalActionBtn" onclick="registrarSolucion()">REGISTRAR SOLUCIÓN</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if(!validarAccesoModulo('incidentes')) return;
+    renderTodo();
+  });
+
+  // ============================================================
+  // Mesa de Incidentes — demo académica sin backend (localStorage)
+  // ============================================================
+
+  function obtenerTickets(){
+    let tickets = JSON.parse(localStorage.getItem('ac_tickets') || 'null');
+    if(!tickets){
+      // Datos de ejemplo iniciales (igual al diseño del grupo)
+      tickets = [
+        { id:'TK-1024', dni:'70011223', cliente:'Carlos Mendoza', cluster:'VIP Platino', fecha:'24/07/26', minutos:135, estado:'critico', tipo:'Reclamo de pago', descripcion:'Cliente reclama pago no acreditado en mesa VIP.', solucion:'' },
+        { id:'TK-1025', dni:'70044556', cliente:'Ana María', cluster:'Casual Mesas', fecha:'24/07/26', minutos:65, estado:'proceso', tipo:'Falla de máquina/mesa', descripcion:'Reporta descuadre en mesa de blackjack.', solucion:'' },
+        { id:'TK-1026', dni:'70077889', cliente:'Juan Pérez', cluster:'Tragamonedas', fecha:'24/07/26', minutos:18, estado:'atendido', tipo:'Consulta general', descripcion:'Consulta sobre acumulación de puntos.', solucion:'Se explicó el sistema de puntos y quedó conforme.' }
+      ];
+      guardarTickets(tickets);
+    }
+    return tickets;
+  }
+  function guardarTickets(tickets){
+    localStorage.setItem('ac_tickets', JSON.stringify(tickets));
+  }
+  function obtenerClientes(){
+    return JSON.parse(localStorage.getItem('ac_clientes') || '[]');
+  }
+  function nombrePorDni(dni){
+    const c = obtenerClientes().find(c => c.dni === dni);
+    return c ? c.nombre : dni;
+  }
+  function siguienteIdTicket(tickets){
+    const nums = tickets.map(t => parseInt(t.id.replace('TK-',''),10)).filter(n => !isNaN(n));
+    const max = nums.length ? Math.max(...nums) : 1023;
+    return 'TK-' + (max + 1);
+  }
+  function formatoTiempo(minutos){
+    const h = Math.floor(minutos/60);
+    const m = minutos % 60;
+    return `${h}h ${String(m).padStart(2,'0')}m`;
+  }
+  function estadoInfo(estado){
+    if(estado === 'critico') return { label:'CRÍTICO', cls:'critico' };
+    if(estado === 'atendido') return { label:'Atendido', cls:'atendido' };
+    return { label:'En proceso', cls:'proceso' };
+  }
+
+  // ---- Render ----
+  function renderTodo(){
+    const tickets = obtenerTickets();
+
+    document.getElementById('kpiActivos').textContent = tickets.filter(t => t.estado !== 'atendido').length;
+    document.getElementById('kpiCriticos').textContent = tickets.filter(t => t.estado === 'critico').length;
+    document.getElementById('criticalBanner').style.display = tickets.some(t => t.estado === 'critico') ? 'flex' : 'none';
+
+    const monitorBody = document.getElementById('monitorBody');
+    monitorBody.innerHTML = '';
+    tickets.forEach(t => {
+      const info = estadoInfo(t.estado);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.id}</td>
+        <td>${t.cliente}</td>
+        <td>${t.cluster}</td>
+        <td>${formatoTiempo(t.minutos)}</td>
+        <td><span class="estado-pill ${info.cls}">${info.label}</span></td>
+        <td><button class="submit-btn mini-btn" onclick="abrirModal('${t.id}')">Ver Detalles</button></td>`;
+      monitorBody.appendChild(tr);
+    });
+
+    renderHistorial();
+  }
+
+  function renderHistorial(){
+    const dni = document.getElementById('incDni').value.trim();
+    const tickets = obtenerTickets().filter(t => t.dni === dni);
+    const empty = document.getElementById('historialEmpty');
+    const table = document.getElementById('historialTable');
+    const body = document.getElementById('historialBody');
+
+    if(!dni || tickets.length === 0){
+      empty.style.display = 'flex';
+      table.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    table.style.display = 'table';
+    body.innerHTML = '';
+    tickets.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.fecha}</td>
+        <td>${t.id}</td>
+        <td><button class="submit-btn mini-btn" onclick="abrirModal('${t.id}')">Ver Detalles</button></td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  // ---- Abrir ticket nuevo ----
+  function abrirTicket(){
+    const dni = document.getElementById('incDni').value.trim();
+    const tipo = document.getElementById('incTipo').value;
+    const descripcion = document.getElementById('incDescripcion').value.trim();
+    const errorEl = document.getElementById('incFormError');
+    errorEl.style.display = 'none';
+
+    if(!dni || !tipo || !descripcion){
+      errorEl.textContent = 'Complete todos los campos para abrir el ticket.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const clienteRegistrado = obtenerClientes().some(c => c.dni === dni);
+    if(!clienteRegistrado){
+      errorEl.textContent = 'El DNI del cliente no se encuentra registrado en el sistema.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!tipo){
+      errorEl.textContent = 'Debe seleccionar un tipo de incidencia.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(descripcion.length > 150){
+      errorEl.textContent = 'La descripción del hecho debe tener máximo 150 caracteres.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const tickets = obtenerTickets();
+    const nuevo = {
+      id: siguienteIdTicket(tickets),
+      dni,
+      cliente: nombrePorDni(dni),
+      cluster: 'Estándar',
+      fecha: new Date().toLocaleDateString('es-PE'),
+      minutos: 0,
+      estado: 'proceso',
+      tipo,
+      descripcion,
+      solucion: ''
+    };
+    tickets.push(nuevo);
+    guardarTickets(tickets);
+
+    document.getElementById('incTipo').value = '';
+    document.getElementById('incDescripcion').value = '';
+
+    renderTodo();
+  }
+
+  // ---- Modal ----
+  let modalTicketId = null;
+
+  function abrirModal(ticketId){
+    const ticket = obtenerTickets().find(t => t.id === ticketId);
+    if(!ticket) return;
+    modalTicketId = ticketId;
+
+    document.getElementById('modalCliente').textContent = `${ticket.cliente} (${ticket.dni})`;
+    document.getElementById('modalTipo').textContent = ticket.tipo;
+    document.getElementById('modalDescripcion').textContent = ticket.descripcion;
+
+    const resuelto = ticket.estado === 'atendido';
+    document.getElementById('modalTitle').textContent = resuelto
+      ? 'DETALLES DEL TICKET EN HISTORIAL'
+      : 'DETALLES DEL TICKET/REGISTRAR SOLUCIÓN';
+
+    document.getElementById('modalSolucionInputWrap').style.display = resuelto ? 'none' : 'block';
+    document.getElementById('modalSolucionTextWrap').style.display = resuelto ? 'block' : 'none';
+    document.getElementById('modalSolucionText').textContent = ticket.solucion;
+    document.getElementById('modalSolucionInput').value = '';
+
+    const btn = document.getElementById('modalActionBtn');
+    if(resuelto){
+      btn.textContent = 'LISTO';
+      btn.onclick = cerrarModal;
+    } else {
+      btn.textContent = 'REGISTRAR SOLUCIÓN';
+      btn.onclick = registrarSolucion;
+    }
+
+    document.getElementById('ticketModal').style.display = 'flex';
+  }
+
+  function cerrarModal(){
+    document.getElementById('ticketModal').style.display = 'none';
+    modalTicketId = null;
+  }
+
+  function registrarSolucion(){
+    const solucion = document.getElementById('modalSolucionInput').value.trim();
+    if(!solucion) return;
+
+    const tickets = obtenerTickets();
+    const ticket = tickets.find(t => t.id === modalTicketId);
+    if(ticket){
+      ticket.solucion = solucion;
+      ticket.estado = 'atendido';
+      guardarTickets(tickets);
+    }
+    cerrarModal();
+    renderTodo();
+  }
+
+  document.getElementById('incDni').addEventListener('input', renderHistorial);
+  document.getElementById('ticketModal').addEventListener('click', e => {
+    if(e.target.id === 'ticketModal') cerrarModal();
+  });
+</script>
+
+</body>
+</html>

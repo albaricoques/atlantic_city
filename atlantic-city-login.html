@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlantic City · Autenticación de Seguridad</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="title">ATLANTIC CITY</span>
+    <span class="subtitle">CASINO · SPORTS</span>
+  </div>
+  <h2>AUTENTICACIÓN DE SEGURIDAD</h2>
+</header>
+
+<main>
+  <div class="card">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" id="tabLogin" onclick="showView('login')">INICIAR SESIÓN</button>
+      <button class="tab" id="tabRegister" onclick="showView('register')">REGISTRAR COLABORADOR</button>
+    </div>
+
+    <!-- VISTA: NIVEL 0 - INICIAR SESIÓN -->
+    <div class="panel-body" id="view-login">
+      <div class="form-col">
+        <div class="field">
+          <label>ID DEL COLABORADOR</label>
+          <input type="text" id="loginId" placeholder="Ej: AC12345678">
+        </div>
+        <div class="field">
+          <label>CONTRASEÑA</label>
+          <input type="password" id="loginPass" placeholder="CONTRASEÑA">
+        </div>
+        <p class="form-error" id="loginError" style="display:none;">ID o contraseña incorrectos, o la cuenta no existe. Regístrese primero.</p>
+        <button class="submit-btn" onclick="intentarLogin()">INGRESAR</button>
+      </div>
+
+      <div class="assistant">
+        <div class="bubble" id="bubble-login">
+          Hola de nuevo estimado colaborador, ¡Que tenga una excelente jornada!
+          <br><br>
+          Si tiene algún inconveniente con sus credenciales, por favor repórtelo al
+          <span class="highlight" onclick="talk('bubble-login')">área de TI</span>
+        </div>
+        <div class="frog-wrap" id="frog-login" onclick="playFrogAudio()">
+          <img src="frog.png" alt="Rana dorada" class="frog-img">
+        </div>
+      </div>
+    </div>
+
+    <!-- VISTA: NIVEL 1 - REGISTRAR COLABORADOR (oculta inicialmente) -->
+    <div class="panel-body" id="view-register" style="display:none;">
+      <div class="form-col">
+        <div class="field">
+          <label>DNI DEL COLABORADOR</label>
+          <input type="text" id="regId" placeholder="Ej: 12345678">
+        </div>
+        <div class="field">
+          <label>NOMBRE COMPLETO</label>
+          <input type="text" id="regNombre" placeholder="NOMBRE COMPLETO">
+        </div>
+        <div class="field">
+          <label>ROL Y ÁREA PERTENECIENTE</label>
+          <select id="regRolArea">
+            <option value="">SELECCIONAR</option>
+            <option value="Servicio al Cliente — Agente de Sala">Servicio al Cliente — Agente de Sala</option>
+            <option value="Servicio al Cliente — Supervisor">Servicio al Cliente — Supervisor</option>
+            <option value="Marketing — Gerente de Marketing">Marketing — Gerente de Marketing</option>
+            <option value="Marketing — Analista de Promociones">Marketing — Analista de Promociones</option>
+            <option value="Operaciones — Gerente de Operaciones">Operaciones — Gerente de Operaciones</option>
+            <option value="Operaciones — Colaborador de Sala">Operaciones — Colaborador de Sala</option>
+            <option value="TI — Administrador del Sistema">TI — Administrador del Sistema</option>
+            <option value="TI — Soporte Técnico">TI — Soporte Técnico</option>
+            <option value="Recursos Humanos — Especialista de Gestión">Recursos Humanos — Especialista de Gestión</option>
+            <option value="Alta Dirección — Gerente General">Alta Dirección — Gerente General</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>CONTRASEÑA</label>
+          <input type="password" id="regPass" placeholder="CONTRASEÑA">
+        </div>
+        <div class="field">
+          <label>CONFIRMAR CONTRASEÑA</label>
+          <input type="password" id="regPassConfirm" placeholder="CONTRASEÑA">
+        </div>
+        <p class="form-error" id="registerError" style="display:none;"></p>
+        <button class="submit-btn" onclick="registrarYVolverALogin()">INGRESAR</button>
+      </div>
+
+      <div class="assistant">
+        <div class="bubble" id="bubble-register">
+          Hola estimado colaborador, por favor asegúrese de ingresar los datos correctamente.
+          <br><br>
+          En caso de presentar alguna duda, comuníquese con el
+          <span class="highlight" onclick="talk('bubble-register')">área de TI</span>
+        </div>
+        <div class="frog-wrap" id="frog-register" onclick="playFrogAudio()">
+          <img src="frog.png" alt="Rana dorada" class="frog-img">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>Sistema interno · Atlantic City Casino &amp; Sports</footer>
+
+<!-- Audio para cuando se hace click en la rana -->
+<audio id="frogAudio" src="XDD.mp3" preload="auto"></audio>
+
+<script src="script.js"></script>
+
+</body>
+</html>

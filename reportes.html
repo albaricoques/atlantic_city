@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlantic City · Reportes Ejecutivos</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="dash-body">
+
+<header class="dash-header seg-header">
+  <div class="logo">
+    <span class="title">ATLANTIC CITY</span>
+    <span class="subtitle">CASINO ◆ SPORTS</span>
+  </div>
+  <h2>REPORTES EJECUTIVOS</h2>
+</header>
+
+<main class="gp-main seg-main rep-main">
+
+  <a href="dashboard.html" class="back-btn seg-back" title="Volver al dashboard">
+    <svg viewBox="0 0 64 64">
+      <path d="M40 12 L18 32 L40 52" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <!-- ---- KPIs ---- -->
+  <section class="seg-kpi-row rep-kpi-row">
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">TOTAL CLIENTES ACTIVOS (MES)</span>
+      <span class="seg-kpi-value">12,450</span>
+      <span class="seg-kpi-trend up">▲ 8% vs mes anterior</span>
+    </div>
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">CONVERSIÓN GENERAL PROMOCIONES</span>
+      <span class="seg-kpi-value">64.2%</span>
+      <span class="seg-kpi-trend down">▼ 2.1% Desviación crítica</span>
+    </div>
+    <div class="seg-kpi">
+      <span class="seg-kpi-label">RECLAMOS RESUELTOS EN SLA</span>
+      <span class="seg-kpi-value good-value">94.8%</span>
+      <span class="seg-kpi-trend up">▲ Meta institucional lograda</span>
+    </div>
+  </section>
+
+  <!-- ---- Layout principal ---- -->
+  <section class="rep-layout">
+
+    <!-- ---- PANEL IZQUIERDO: DISTRIBUCIÓN DE INGRESOS POR CLÚSTER ---- -->
+    <div class="rep-panel rep-chart-panel">
+      <h3 class="seg-panel-title">DISTRIBUCIÓN DE INGRESOS POR CLÚSTER</h3>
+      <div class="rep-olive-body">
+
+        <div class="pie-wrap">
+          <!-- Leyenda izquierda -->
+          <div class="pie-legend">
+            <div class="legend-item">
+              <span class="legend-color lg-traga"></span>
+              <div class="legend-text">
+                <span class="legend-title">TRAGAMONEDAS</span>
+                <span class="legend-subs">S/450.000</span>
+                <span class="legend-subs">(MES)</span>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color lg-casual"></span>
+              <div class="legend-text">
+                <span class="legend-title">CASUAL MESAS</span>
+                <span class="legend-subs">S/350.000</span>
+                <span class="legend-subs">(MES)</span>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color lg-vip"></span>
+              <div class="legend-text">
+                <span class="legend-title">VIP PLATINO</span>
+                <span class="legend-subs">S/200.000</span>
+                <span class="legend-subs">(MES)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico pastel (conic-gradient CSS) -->
+          <div class="pie-chart" aria-label="Distribución por clúster">
+            <div class="pie-slice ps-traga"><span>45%</span></div>
+            <div class="pie-slice ps-casual"><span>35%</span></div>
+            <div class="pie-slice ps-vip"><span>20%</span></div>
+          </div>
+        </div>
+
+        <!-- Nota del sistema -->
+        <div class="rep-note">
+          <svg viewBox="0 0 24 24" class="rep-info-icon"><circle cx="12" cy="12" r="11" fill="#1c1400"/><path d="M12 10.5V18M10.5 10.5h3.5v-1h-3.5zM12 6.5a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z" fill="none" stroke="var(--gold-light)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div>
+            <strong>Nota del Sistema:</strong> Los datos se actualizan a través de procesos automáticos ETL.<br>
+            La información se visualiza en tiempo real.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ---- PANEL DERECHO: ALERTAS Y AUTOMATIZACIONES ---- -->
+    <div class="rep-panel rep-alerts-panel">
+      <h3 class="seg-panel-title">ALERTAS Y AUTOMATIZACIONES GATILLADAS</h3>
+      <div class="rep-olive-body rep-alerts-body" id="alertsBody">
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>Sistema interno · Atlantic City Casino &amp; Sports</footer>
+
+<script src="script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if(!validarAccesoModulo('reportes')) return;
+    renderAlertas();
+  });
+
+  function obtenerAlertas(){
+    let alertas = JSON.parse(localStorage.getItem('ac_alertas') || 'null');
+    if(!alertas){
+      alertas = [
+        {
+          id: 'ALT-001',
+          fecha: '18/06 02:00 AM',
+          tipo: 'exito',
+          texto: 'Segmentación diaria completada con éxito. 45 clientes migrados a VIP Platino.'
+        },
+        {
+          id: 'ALT-002',
+          fecha: '17/06 04:30 PM',
+          tipo: 'error',
+          texto: 'Alerta automática enviada a Gerencia de Marketing por caída del 15% en efectividad de cupones.'
+        }
+      ];
+      localStorage.setItem('ac_alertas', JSON.stringify(alertas));
+    }
+    return alertas;
+  }
+
+  function renderAlertas(){
+    const body = document.getElementById('alertsBody');
+    const alertas = obtenerAlertas();
+    body.innerHTML = '';
+    if(alertas.length === 0){
+      body.innerHTML = `<div class="rep-empty">No hay alertas emitidas recientemente.</div>`;
+      return;
+    }
+    alertas.forEach(a => {
+      const el = document.createElement('div');
+      el.className = `rep-alerta alerta-${a.tipo}`;
+      el.innerHTML = `
+        <span class="alerta-fecha">${a.fecha}:</span>
+        <span class="alerta-texto">${a.texto}</span>
+      `;
+      body.appendChild(el);
+    });
+  }
+</script>
+
+</body>
+</html>

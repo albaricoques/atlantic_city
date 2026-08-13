@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlantic City · Gestión de Perfiles</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="dash-body">
+
+<header class="dash-header">
+  <div class="logo">
+    <span class="title">ATLANTIC CITY</span>
+    <span class="subtitle">CASINO · SPORTS</span>
+  </div>
+  <h2>GESTIÓN DE PERFILES</h2>
+</header>
+
+<main class="gp-main">
+
+  <a href="dashboard.html" class="back-btn" title="Volver al dashboard">
+    <svg viewBox="0 0 64 64">
+      <path d="M40 12 L18 32 L40 52" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <section class="gp-layout">
+
+    <!-- ---- PANEL IZQUIERDO: VERIFICAR PERFIL ---- -->
+    <div class="gp-panel gp-verify">
+      <h3>VERIFICAR PERFIL EXISTENTE</h3>
+
+      <div class="field">
+        <label>DNI/PASAPORTE</label>
+        <input type="text" id="verifyDni" placeholder="Ej: 12345678">
+      </div>
+
+      <button class="submit-btn search-btn" onclick="buscarPerfil()">
+        <svg viewBox="0 0 24 24" class="search-icon"><circle cx="10" cy="10" r="7" fill="none" stroke="#1c1400" stroke-width="2.4"/><line x1="15.2" y1="15.2" x2="21" y2="21" stroke="#1c1400" stroke-width="2.4" stroke-linecap="round"/></svg>
+        BUSCAR
+      </button>
+
+      <div class="verify-result" id="resultValid" style="display:none;">
+        <div class="result-box valid">
+          <span>DOCUMENTO VÁLIDO PARA PUC</span>
+          <svg viewBox="0 0 24 24" class="check-icon"><circle cx="12" cy="12" r="11" fill="#2f5e2f"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#eafbe6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="verify-result" id="resultDuplicate" style="display:none;">
+        <div class="result-box duplicate">
+          <span>ESTE DOCUMENTO YA SE ENCUENTRA REGISTRADO</span>
+          <button class="submit-btn view-profile-btn" onclick="verPerfilExistente()">VER PERFIL EXISTENTE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- PANEL DERECHO: REGISTRO + VISUALIZACIÓN ---- -->
+    <div class="gp-panel gp-right">
+
+      <div class="gp-col gp-register">
+        <h3>REGISTRO DE NUEVO CLIENTE</h3>
+        <div class="field">
+          <label>DNI/PASAPORTE</label>
+          <input type="text" id="regDni" placeholder="Ej: 12345678">
+        </div>
+        <div class="field">
+          <label>NOMBRES Y APELLIDOS</label>
+          <input type="text" id="regNombres" placeholder="NOMBRES Y APELLIDOS">
+        </div>
+        <div class="field">
+          <label>CORREO ELECTRÓNICO</label>
+          <input type="email" id="regCorreo" placeholder="correo@correo.com">
+        </div>
+        <div class="field">
+          <label>TELÉFONO DE CONTACTO</label>
+          <input type="text" id="regTelefono" placeholder="Ej: 123456789">
+        </div>
+        <p class="form-error" id="registroClienteError" style="display:none;"></p>
+        <button class="submit-btn" onclick="procesarRegistroCliente()">Procesar Registro / Guardar en PUC</button>
+      </div>
+
+      <div class="gp-col gp-view">
+        <h3>VISUALIZACIÓN DE PERFIL</h3>
+        <div class="profile-card" id="profileCard" style="display:none;">
+          <span class="profile-avatar">
+            <svg viewBox="0 0 64 64"><circle cx="32" cy="24" r="12" fill="#1c1400"/><path d="M10 54c0-13 10-20 22-20s22 7 22 20" fill="#1c1400"/></svg>
+          </span>
+          <div class="profile-info">
+            <span class="profile-id" id="profDni">[ID DE USUARIO]</span>
+            <span class="profile-name" id="profNombre">[NOMBRES Y APELLIDOS]</span>
+          </div>
+          <span class="profile-email" id="profCorreo">[CORREO ELECTRÓNICO]</span>
+          <span class="profile-phone" id="profTelefono">[TELÉFONO DE CONTACTO]</span>
+          <span class="profile-category">CLIENTE ESTÁNDAR</span>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<footer>Sistema interno · Atlantic City Casino &amp; Sports</footer>
+
+<script src="script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if(!validarAccesoModulo('perfiles')) return;
+    crearClientePorDefecto();
+  });
+
+  function obtenerClientes(){
+    return JSON.parse(localStorage.getItem('ac_clientes') || '[]');
+  }
+  function guardarClientes(clientes){
+    localStorage.setItem('ac_clientes', JSON.stringify(clientes));
+  }
+
+  function crearClientePorDefecto(){
+    const clientes = obtenerClientes();
+    const dniDefault = '09876543';
+
+    if(!clientes.some(c => c.dni === dniDefault)){
+      clientes.push({
+        dni: dniDefault,
+        nombre: 'Yhordan Yaja',
+        correo: 'megusta@mascarla.com',
+        telefono: '098765432'
+      });
+      guardarClientes(clientes);
+      console.log('Cliente por defecto creado:', dniDefault);
+    }
+  }
+
+  function buscarPerfil(){
+    const dni = document.getElementById('verifyDni').value.trim();
+    const resultValid = document.getElementById('resultValid');
+    const resultDuplicate = document.getElementById('resultDuplicate');
+    const profileCard = document.getElementById('profileCard');
+
+    resultValid.style.display = 'none';
+    resultDuplicate.style.display = 'none';
+    profileCard.style.display = 'none';
+
+    if(!dni) return;
+
+    const existente = obtenerClientes().find(c => c.dni === dni);
+
+    if(existente){
+      resultDuplicate.style.display = 'block';
+    } else {
+      resultValid.style.display = 'block';
+    }
+  }
+
+  function verPerfilExistente(){
+    const dni = document.getElementById('verifyDni').value.trim();
+    const cliente = obtenerClientes().find(c => c.dni === dni);
+    if(!cliente) return;
+
+    document.getElementById('profDni').textContent = cliente.dni;
+    document.getElementById('profNombre').textContent = cliente.nombre;
+    document.getElementById('profCorreo').textContent = cliente.correo;
+    document.getElementById('profTelefono').textContent = cliente.telefono;
+    document.getElementById('profileCard').style.display = 'grid';
+  }
+
+  function procesarRegistroCliente(){
+    const dni = document.getElementById('regDni').value.trim();
+    const nombre = document.getElementById('regNombres').value.trim();
+    const correo = document.getElementById('regCorreo').value.trim();
+    const telefono = document.getElementById('regTelefono').value.trim();
+    const errorEl = document.getElementById('registroClienteError');
+
+    errorEl.style.display = 'none';
+
+    if(!dni || !nombre || !correo || !telefono){
+      errorEl.textContent = 'Complete todos los campos.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!/^\d{8}$/.test(dni)){
+      errorEl.textContent = 'El DNI debe ser un número entero de exactamente 8 dígitos.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(nombre.length > 50){
+      errorEl.textContent = 'El nombre debe tener máximo 50 caracteres (incluyendo espacios).';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const correoRegex = /^[^\s@]+@[^\s@]+\.com$/;
+    if(!correoRegex.test(correo)){
+      errorEl.textContent = 'El correo debe ser válido e incluir "@" y dominio ".com".';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if(!/^\d{9}$/.test(telefono)){
+      errorEl.textContent = 'El teléfono debe ser un número entero de exactamente 9 dígitos.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const clientes = obtenerClientes();
+    if(clientes.some(c => c.dni === dni)){
+      errorEl.textContent = 'Este DNI/pasaporte ya está registrado en el PUC.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    clientes.push({ dni, nombre, correo, telefono });
+    guardarClientes(clientes);
+
+    document.getElementById('regDni').value = '';
+    document.getElementById('regNombres').value = '';
+    document.getElementById('regCorreo').value = '';
+    document.getElementById('regTelefono').value = '';
+
+    document.getElementById('verifyDni').value = dni;
+    buscarPerfil();
+  }
+</script>
+
+</body>
+</html>
